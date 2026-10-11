@@ -3,6 +3,14 @@
 The egui frontend draws panels and dialogs, and dispatches project changes through the engine.
 Interactive controls keep stable automation ids regardless of the interface language.
 
+## Clip audio gain context menu
+
+The clip context menu includes Audio Gain…, opening the same Set/Adjust/Normalize dialog as
+Clip > Audio Options > Audio Gain… and the G shortcut. Right-clicking an unselected clip selects
+it before opening the dialog. `timeline.clipMenu.clip.audioGain` exposes the entry to automation.
+`sequence_tabs_ui` covers opening the dialog from the context menu, changing the clicked clip's
+gain, leaving the previously selected clip's gain unchanged and undoing the gain adjustment.
+
 ## Transition drop previews
 
 Dragging a video or audio transition over a compatible clip shows its actual time span, the

@@ -142,6 +142,32 @@ fn clip_context_menu_offers_nest_and_make_subsequence() {
 }
 
 #[test]
+fn clip_context_menu_audio_gain_adjusts_the_clicked_clip_and_undoes() {
+    let mut d = Driver::new();
+    let (clip, other, before) = {
+        let q = d.app().session.active_sequence().unwrap();
+        let clip = &q.audio_tracks[0].items[0];
+        let other = &q.audio_tracks[0].items[1];
+        (clip.id, other.id, clip.gain_db)
+    };
+    d.exec("timeline.select", json!({"clips": [other.0]}));
+    d.app().ui.audio_gain.adjust_db = -6.0;
+    d.ok("ui.click", json!({"id": format!("timeline.clip.{}", clip.0), "button": "right"}));
+    d.frames(3);
+    assert!(d.has("timeline.clipMenu.clip.audioGain"));
+    d.click("timeline.clipMenu.clip.audioGain");
+    assert!(d.has("audioGain.adjust"), "the context menu opens the existing gain dialog");
+    d.click("audioGain.adjust");
+    let other_gain = d.app().session.active_sequence().unwrap().find_item(other).unwrap().1.gain_db;
+    d.click("audioGain.ok");
+    let q = d.app().session.active_sequence().unwrap();
+    assert_eq!(q.find_item(clip).unwrap().1.gain_db, before - 6.0);
+    assert_eq!(q.find_item(other).unwrap().1.gain_db, other_gain, "the previous selection is not changed");
+    d.exec("edit.undo", json!({}));
+    assert_eq!(d.app().session.active_sequence().unwrap().find_item(clip).unwrap().1.gain_db, before);
+}
+
+#[test]
 fn timeline_has_a_tab_per_open_sequence() {
     let mut d = Driver::new();
     let main = d.app().session.state.active_sequence.unwrap().0;

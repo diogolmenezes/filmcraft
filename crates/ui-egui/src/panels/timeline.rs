@@ -1752,6 +1752,7 @@ pub(crate) const CLIP_MENU: &[&[(&str, &str)]] = &[
     ],
     &[("Label", "edit.label")],
     &[("Speed/Duration…", "clip.speedDuration")],
+    &[("Audio Gain…", "clip.audioGain")],
     &[
         ("Frame Hold Options…", "clip.frameHoldOptions"),
         ("Add Frame Hold", "clip.frameHold"),
